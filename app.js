@@ -2,6 +2,8 @@ const container = document.querySelector('.container-photo');
 const containerInfo = document.querySelector('.container-info-pokemon')
 const input = document.getElementById('input');
 const div = document.querySelector('.card');
+const containerStats = document.querySelector('.stats')
+const containerTypes = document.querySelector('.types')
 
 
 
@@ -11,6 +13,7 @@ document.addEventListener('click', (e) => {
         e.preventDefault();
         container.innerHTML = "";
         searchPokemon()
+        
     }
 
 })
@@ -46,9 +49,23 @@ const printCards = (data) => {
 }
 
 const printStats = (data) => {
-    containerInfo.innerHTML = "";
+     const typePrimary = document.createElement('div');
+     typePrimary.className = 'type-primary';
+     typePrimary.innerHTML = data.types;
+     const typeSecondary = document.createElement('div');
+     typeSecondary.className = 'type-secondary';
+     containerTypes.appendChild(typePrimary, typeSecondary);
+    
     const title = document.createElement('h3');    
     title.innerHTML = data.name;
-    containerInfo.appendChild(title);
+    containerInfo.insertBefore(title, containerTypes);
+    Object.values(data.stats).forEach(stat => {
+        const li = document.createElement('li');
+        const span = document.createElement('span');
+        li.innerHTML = stat.stat.name;
+        span.innerHTML = stat.base_stat;
+        li.appendChild(span);
+        containerStats.appendChild(li);
+    })
 
 }
