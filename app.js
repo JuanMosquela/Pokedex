@@ -46,13 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
             printCards(data);
             printTitle(data);
             printStats(data);
-            printTypes({types})
+            printTypes(data.types)
     
             pokemons = []
             
             pokemons.push(data)
             localStorage.setItem('pokedex', JSON.stringify(pokemons))
-            console.log(pokemons)
+            
         }
     
         catch{
@@ -112,9 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(localStorage.getItem('pokedex')){
         pokemons = JSON.parse(localStorage.getItem('pokedex'));       
         
-        printTitle(pokemons[0]);        
-        printCards(pokemons[0]); 
-        printTypes(pokemons[0].types);        
+        printTitle(pokemons[0])        
+        printCards(pokemons[0]) 
+        printTypes(pokemons[0].types)        
         printStats(pokemons[0])  
 
     }
