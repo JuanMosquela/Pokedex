@@ -26,89 +26,96 @@ const typeColors = {
     default: '#2A1A1F',
 };
 
-document.addEventListener('click', (e) => {
+document.addEventListener('DOMContentLoaded', () => {
 
-    if(e.target.matches('.circle')){
-        e.preventDefault();       
-        searchPokemon()
-        
-    }
+    document.addEventListener('click', (e) => {
 
-})
-
-const searchPokemon = async () => {        
-   
-    try{    
-          
-        loading(true);
-        
-        const url = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.value}`)        
-        const data = await url.json();        
+        if(e.target.matches('.circle')){
+            e.preventDefault();       
+            searchPokemon()            
+        }    
+    })
+    
+    const searchPokemon = async () => {        
        
-        printCards(data);
-        printTitle(data);
-        printStats(data);
-        printTypes(data.types)
-    }
-
-    catch{
-        console.log('error')
-    } 
+        try{              
+            loading(true);            
+            const url = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.value}`)        
+            const data = await url.json();        
+           
+            printCards(data);
+            printTitle(data);
+            printStats(data);
+            printTypes({types})
     
-    finally{
-        loading(false)
+            pokemons = []
+            
+            pokemons.push(data)
+            localStorage.setItem('pokedex', JSON.stringify(pokemons))
+            console.log(pokemons)
+        }
+    
+        catch{
+            console.log('error')
+        } 
         
+        finally{
+            loading(false)
+            
+        }
     }
-}
-
-const loading = (state) => {
-
     
-
-    const loader = document.querySelector('.loader');
-     
-    state ? loader.classList.add('d-show') : loader.classList.remove('d-show')    
-
-}
-
-
-
-const printTitle = (data) => {
-    containerTitle.innerHTML = "";
-    const title = document.createElement('h3');      
-    title.innerHTML = data.name;
-    containerTitle.appendChild(title)
-}
-
-const printCards = (data) => { 
+    const loading = (state) => {   
     
-    div.innerHTML = "";   
-    const img = document.createElement('img')
-    img.setAttribute('src', data.sprites.front_default)
-    div.appendChild(img);
-    div.style.backgroundColor = '#FFF';    
-    container.appendChild(div)
-}
+        const loader = document.querySelector('.loader');         
+        state ? loader.classList.add('d-show') : loader.classList.remove('d-show')   
+    }   
+    
+    const printTitle = ({name}) => {
+        containerTitle.innerHTML = "";
+        const title = document.createElement('h3');      
+        title.innerHTML = name;
+        containerTitle.appendChild(title)
+    }
+    
+    const printCards = ({sprites}) => {         
+        div.innerHTML = "";   
+        const img = document.createElement('img')
+        img.setAttribute('src', sprites.front_default)
+        div.appendChild(img);
+        div.style.backgroundColor = '#FFF';    
+        container.appendChild(div)
+    }
+    
+    const printTypes = (types) => {
+        containerTypes.innerHTML = "";
+        types.forEach(types => {
+            const div = document.createElement('div');
+            div.style.backgroundColor = typeColors[types.type.name];
+            div.textContent = types.type.name;
+            containerTypes.appendChild(div)       
+        })
+    }
+    
+    const printStats = ({stats}) => {   
+         containerStats.innerHTML = "";    
+        Object.values(stats).forEach(stat => {
+            const li = document.createElement('li');
+            const span = document.createElement('span');
+            li.innerHTML = stat.stat.name;
+            span.innerHTML = stat.base_stat;
+            li.appendChild(span);
+            containerStats.appendChild(li);
+        })    
+    }
 
-const printTypes = (types) => {
-    containerTypes.innerHTML = "";
-    types.forEach(types => {
-        const div = document.createElement('div');
-        div.style.backgroundColor = typeColors[types.type.name];
-        div.textContent = types.type.name;
-        containerTypes.appendChild(div)       
-    })
-}
+    if(localStorage.getItem('pokedex')){
+        pokemons = JSON.parse(localStorage.getItem('pokedex'));       
+        
+        printTitle(pokemons[0])        
+        printCards(pokemons[0]) 
+        printTypes(pokemons[0].types)        
+        printStats(pokemons[0])  
 
-const printStats = (data) => {   
-     containerStats.innerHTML = "";    
-    Object.values(data.stats).forEach(stat => {
-        const li = document.createElement('li');
-        const span = document.createElement('span');
-        li.innerHTML = stat.stat.name;
-        span.innerHTML = stat.base_stat;
-        li.appendChild(span);
-        containerStats.appendChild(li);
-    })
-
-}
+    }
+})
